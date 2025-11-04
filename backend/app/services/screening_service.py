@@ -10,24 +10,25 @@ from enum import Enum
 class DrugName(str, Enum):
     """Available medications"""
     PHENTERMINE = "Phentermine"
-    QSYMIA = "Qsymia (Phentermine/Topiramate)"
-    CONTRAVE = "Contrave (Naltrexone/Bupropion)"
-    SAXENDA = "Saxenda (Liraglutide)"
-    WEGOVY = "Wegovy (Semaglutide)"
-    ZEPBOUND = "Zepbound (Tirzepatide)"
     TOPIRAMATE = "Topiramate"
+    QSYMIA = "Qsymia"
+    CONTRAVE = "Contrave"
     NALTREXONE = "Naltrexone"
     BUPROPION = "Bupropion"
     VYVANSE = "Vyvanse"
-    ORLISTAT = "Orlistat (Xenical/Alli)"
+    WEGOVY = "Wegovy"
+    ZEPBOUND = "Zepbound"
 
 
 # Initial drug pool
 INITIAL_DRUG_POOL = [
     DrugName.PHENTERMINE,
+    DrugName.TOPIRAMATE,
     DrugName.QSYMIA,
     DrugName.CONTRAVE,
-    DrugName.SAXENDA,
+    DrugName.NALTREXONE,
+    DrugName.BUPROPION,
+    DrugName.VYVANSE,
     DrugName.WEGOVY,
     DrugName.ZEPBOUND,
 ]
