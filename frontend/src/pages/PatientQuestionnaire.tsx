@@ -405,7 +405,7 @@ const PatientQuestionnaire: React.FC = () => {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label>2. Weight *</label>
+            <label>2. Weight (lb) *</label>
             <input
               type="number"
               step="0.1"
@@ -413,7 +413,7 @@ const PatientQuestionnaire: React.FC = () => {
               onChange={(e) => setFormData({ ...formData, weight_lb: e.target.value })}
               required
               style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-              placeholder="lb"
+              placeholder="pounds"
             />
           </div>
 
