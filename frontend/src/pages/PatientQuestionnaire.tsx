@@ -634,7 +634,7 @@ const PatientQuestionnaire: React.FC = () => {
                 checked={formData.health_conditions.includes('psychiatric_treatment')}
                 onChange={(e) => handleCheckboxChange('health_conditions', 'psychiatric_treatment', e.target.checked)}
               />
-              {' '}Psychiatric disorders (e.g., anxiety disorder, bipolar disorder, depression; currently receiving treatment)
+              {' '}Psychiatric disorders (e.g., anxiety disorder, bipolar disorder, depression)
             </label>
             <label>
               <input
