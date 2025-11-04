@@ -246,79 +246,18 @@ class ScreeningService:
         symptoms: List[str]
     ) -> List[Dict[str, Any]]:
         """
-        Step IV: Refine Recommendation Priority Based on Symptoms
-        Based on:
-        - Large appetite/Lack of satiety/Binge eating: Phentermine, Vyvanse, Qsymia, Topiramate
-        - Emotional Eating/Cravings/Night Eating/Snacking/Grazing: Contrave, Bupropion, Naltrexone, Topiramate
+        Step IV: Return drugs in original pool order (as defined in Word document)
+        No prioritization - just maintain the order from INITIAL_DRUG_POOL
         """
         recommendations = []
 
-        # Categorize symptoms per your rules
-        appetite_symptoms = ["excessive_appetite", "binge_eating", "loss_of_control_eating"]
-        behavioral_symptoms = ["emotional_eating"]
-
-        has_appetite_issues = any(s in symptoms for s in appetite_symptoms)
-        has_behavioral_issues = any(s in symptoms for s in behavioral_symptoms)
-        has_binge_eating = "binge_eating" in symptoms
-
-        if has_appetite_issues and has_behavioral_issues:
-            # Mixed symptoms: prioritize drugs that address both
-            priority_order = [
-                (DrugName.QSYMIA, "First-line: Balances appetite suppression + eating behavior control"),
-                (DrugName.TOPIRAMATE, "Alternative: Addresses both appetite and behavioral symptoms"),
-                (DrugName.CONTRAVE, "Alternative: Good for mixed symptoms"),
-                (DrugName.PHENTERMINE, "Alternative: Strong appetite suppressant"),
-            ]
-        elif has_appetite_issues:
-            # Large appetite/Lack of satiety/Binge eating
-            # Rule: Phentermine, Vyvanse, Qsymia, Topiramate
-            priority_order = []
-            if has_binge_eating:
-                # Vyvanse is FDA-approved for binge eating disorder
-                priority_order.append((DrugName.VYVANSE, "First-line: FDA-approved for binge eating disorder"))
-            priority_order.extend([
-                (DrugName.PHENTERMINE, "First-line: Cost-effective appetite suppressant"),
-                (DrugName.QSYMIA, "Enhanced appetite control with longer duration"),
-                (DrugName.TOPIRAMATE, "Alternative: Appetite suppression"),
-            ])
-            if not has_binge_eating and DrugName.VYVANSE in drug_pool:
-                priority_order.insert(1, (DrugName.VYVANSE, "Alternative: Strong appetite control"))
-        elif has_behavioral_issues:
-            # Emotional Eating/Cravings/Night Eating/Snacking/Grazing
-            # Rule: Contrave, Bupropion, Naltrexone, Topiramate
-            priority_order = [
-                (DrugName.CONTRAVE, "First-line: Targets cravings and emotional eating"),
-                (DrugName.BUPROPION, "Alternative: Helps with emotional eating"),
-                (DrugName.NALTREXONE, "Alternative: Reduces cravings and reward-based eating"),
-                (DrugName.TOPIRAMATE, "Alternative: Helps with cravings and night eating"),
-            ]
-        else:
-            # No specific symptoms - general weight loss focused
-            priority_order = [
-                (DrugName.WEGOVY, "First-line: Highest efficacy for weight loss (injectable)"),
-                (DrugName.ZEPBOUND, "Alternative: Highest efficacy (injectable, dual GIP/GLP-1)"),
-                (DrugName.SAXENDA, "Alternative: GLP-1 agonist for metabolic benefits (injectable)"),
-                (DrugName.QSYMIA, "Alternative: Oral option with good efficacy"),
-                (DrugName.PHENTERMINE, "Cost-effective oral option"),
-                (DrugName.CONTRAVE, "Oral option for general weight loss"),
-            ]
-
-        # Filter to only include drugs still in the pool
-        for drug, reasoning in priority_order:
+        # Maintain the original order from INITIAL_DRUG_POOL
+        for drug in INITIAL_DRUG_POOL:
             if drug in drug_pool:
                 recommendations.append({
                     "medication": drug,
                     "priority": len(recommendations) + 1,
-                    "reasoning": reasoning
-                })
-
-        # Add remaining drugs from pool that weren't prioritized
-        for drug in drug_pool:
-            if not any(r["medication"] == drug for r in recommendations):
-                recommendations.append({
-                    "medication": drug,
-                    "priority": len(recommendations) + 1,
-                    "reasoning": "Alternative option"
+                    "reasoning": "Retained after screening"
                 })
 
         return recommendations
