@@ -122,39 +122,26 @@ const ScreeningResults: React.FC = () => {
         <section style={{ marginBottom: '30px' }}>
           <h2>Recommended Medications</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
-            Based on your screening, here are the medications recommended in order of priority:
+            Based on your screening, the following medications are retained:
           </p>
 
-          {results.recommended_drugs.map((drug, index) => (
-            <div
-              key={index}
-              style={{
-                marginBottom: '15px',
-                padding: '20px',
-                border: index === 0 ? '3px solid #1976d2' : '1px solid #ccc',
-                borderRadius: '8px',
-                backgroundColor: index === 0 ? '#e3f2fd' : '#f9f9f9'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{
-                  backgroundColor: index === 0 ? '#1976d2' : '#757575',
-                  color: 'white',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  marginRight: '10px',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}>
-                  Priority {drug.priority}
-                </span>
-                <h3 style={{ margin: 0 }}>{drug.medication}</h3>
-              </div>
-              <p style={{ margin: 0, color: '#333', fontSize: '15px' }}>
-                <strong>Reasoning:</strong> {drug.reasoning}
-              </p>
-            </div>
-          ))}
+          <div style={{
+            padding: '20px',
+            border: '2px solid #1976d2',
+            borderRadius: '8px',
+            backgroundColor: '#f9f9f9'
+          }}>
+            <ul style={{
+              margin: 0,
+              paddingLeft: '20px',
+              fontSize: '18px',
+              lineHeight: '2'
+            }}>
+              {results.recommended_drugs.map((drug, index) => (
+                <li key={index}>{drug.medication}</li>
+              ))}
+            </ul>
+          </div>
         </section>
       )}
 
