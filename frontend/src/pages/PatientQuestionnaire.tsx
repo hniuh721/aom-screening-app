@@ -784,7 +784,7 @@ const PatientQuestionnaire: React.FC = () => {
             fontWeight: 'bold'
           }}
         >
-          {isLoading ? 'Submitting and Running Screening...' : 'Submit Questionnaire & Get Recommendations'}
+          {isLoading ? 'Submitting...' : 'Submit'}
         </button>
       </form>
     </div>
