@@ -1,7 +1,8 @@
 // API client for backend communication
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
 // Create axios instance (no authentication required)
 const apiClient = axios.create({
