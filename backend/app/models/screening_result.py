@@ -19,6 +19,7 @@ class ScreeningResult(Base):
     # Patient demographic info
     age = Column(Integer, nullable=True)
     gender = Column(String, nullable=True)
+    is_childbearing_age_woman = Column(Boolean, nullable=True)
 
     # Screening steps details
     bmi_category = Column(String, nullable=True)

@@ -13,6 +13,7 @@ interface ScreeningResult {
   eligibility_message: string;
   age?: number;
   gender?: string;
+  is_childbearing_age_woman?: boolean;
   bmi_category: string;
   recommended_drugs: Recommendation[];
   warnings: string[];
@@ -95,7 +96,7 @@ const ScreeningResults: React.FC = () => {
         </h2>
         {results.age && (
           <p style={{ fontSize: '16px', marginTop: '10px', marginBottom: '5px' }}>
-            <strong>Age:</strong> {results.age}
+            <strong>Age:</strong> {results.age}{results.is_childbearing_age_woman && ' (childbearing age)'}
           </p>
         )}
         {results.gender && (
