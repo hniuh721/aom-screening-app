@@ -92,7 +92,7 @@ const ScreeningResults: React.FC = () => {
           Screening Completed
         </h2>
         <p style={{ fontSize: '16px', marginTop: '10px' }}>
-          <strong>BMI Category:</strong> {results.bmi_category}
+          <strong>BMI:</strong> {results.bmi_category}
         </p>
       </section>
 

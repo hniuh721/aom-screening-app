@@ -221,19 +221,8 @@ class ScreeningService:
         )
         result["bmi"] = bmi
 
-        # Determine BMI category
-        if bmi < 27:
-            bmi_category = f"BMI {bmi} (Below threshold)"
-        elif 27 <= bmi < 30:
-            bmi_category = f"BMI {bmi} (Overweight)"
-        elif 30 <= bmi < 35:
-            bmi_category = f"BMI {bmi} (Class 1 Obesity)"
-        elif 35 <= bmi < 40:
-            bmi_category = f"BMI {bmi} (Class 2 Obesity)"
-        else:
-            bmi_category = f"BMI {bmi} (Class 3 Obesity)"
-
-        result["bmi_category"] = bmi_category
+        # Store BMI value
+        result["bmi_category"] = str(bmi)
 
         # FIRST-STEP: Apply health status exclusions (Table 1)
         health_conditions = questionnaire_data.get("health_conditions", [])
