@@ -69,6 +69,8 @@ def run_screening(
         patient_id=questionnaire.patient_id,
         is_eligible=screening_result["is_eligible"],
         eligibility_message=screening_result["eligibility_message"],
+        age=questionnaire.age,
+        gender=questionnaire.gender,
         bmi_category=screening_result["bmi_category"],
         initial_drug_pool=[str(drug) for drug in screening_result["initial_drug_pool"]],
         excluded_drugs={str(k): v for k, v in screening_result["excluded_drugs"].items()},

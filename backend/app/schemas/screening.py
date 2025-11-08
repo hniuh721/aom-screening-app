@@ -17,6 +17,8 @@ class ScreeningResultResponse(BaseModel):
     patient_id: Optional[int] = None  # Nullable for anonymous submissions
     is_eligible: bool
     eligibility_message: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
     bmi_category: Optional[str] = None
     initial_drug_pool: Optional[List[str]] = []
     excluded_drugs: Optional[Dict[str, str]] = {}

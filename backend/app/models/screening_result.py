@@ -16,6 +16,10 @@ class ScreeningResult(Base):
     is_eligible = Column(Boolean, nullable=False)
     eligibility_message = Column(Text, nullable=True)
 
+    # Patient demographic info
+    age = Column(Integer, nullable=True)
+    gender = Column(String, nullable=True)
+
     # Screening steps details
     bmi_category = Column(String, nullable=True)
     initial_drug_pool = Column(JSON, nullable=True)  # List of initial medications

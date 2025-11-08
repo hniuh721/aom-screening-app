@@ -11,6 +11,8 @@ interface Recommendation {
 interface ScreeningResult {
   is_eligible: boolean;
   eligibility_message: string;
+  age?: number;
+  gender?: string;
   bmi_category: string;
   recommended_drugs: Recommendation[];
   warnings: string[];
@@ -91,7 +93,17 @@ const ScreeningResults: React.FC = () => {
         <h2 style={{ color: '#1565c0', marginTop: 0 }}>
           Screening Completed
         </h2>
-        <p style={{ fontSize: '16px', marginTop: '10px' }}>
+        {results.age && (
+          <p style={{ fontSize: '16px', marginTop: '10px', marginBottom: '5px' }}>
+            <strong>Age:</strong> {results.age}
+          </p>
+        )}
+        {results.gender && (
+          <p style={{ fontSize: '16px', marginTop: '5px', marginBottom: '5px' }}>
+            <strong>Gender:</strong> {results.gender.charAt(0).toUpperCase() + results.gender.slice(1)}
+          </p>
+        )}
+        <p style={{ fontSize: '16px', marginTop: '5px' }}>
           <strong>BMI:</strong> {results.bmi_category}
         </p>
       </section>
