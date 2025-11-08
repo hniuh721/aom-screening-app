@@ -52,18 +52,10 @@ def run_screening(
 
     # Prepare questionnaire data for screening
     questionnaire_data = {
-        "age": questionnaire.age,
-        "gender": questionnaire.gender,
-        "is_childbearing_age_woman": questionnaire.is_childbearing_age_woman,
-        "has_medical_evaluation": questionnaire.has_medical_evaluation,
-        "attempted_lifestyle_modifications": questionnaire.attempted_lifestyle_modifications,
-        "has_reliable_contraception": questionnaire.has_reliable_contraception,
-        "bariatric_surgery_status": questionnaire.bariatric_surgery_status,
         "height_ft": questionnaire.height_ft,
         "height_in": questionnaire.height_in,
         "weight_lb": questionnaire.weight_lb,
-        "comorbidities": questionnaire.comorbidities or [],
-        "symptoms": questionnaire.symptoms or [],
+        "eating_habits": questionnaire.eating_habits or [],
         "health_conditions": questionnaire.health_conditions or [],
     }
 

@@ -80,18 +80,17 @@ const ScreeningResults: React.FC = () => {
     <div style={{ maxWidth: '900px', margin: '20px auto', padding: '20px' }}>
       <h1>Your Screening Results</h1>
 
-      {/* Eligibility Status */}
+      {/* Screening Status */}
       <section style={{
         marginBottom: '30px',
         padding: '20px',
-        backgroundColor: results.is_eligible ? '#e8f5e9' : '#ffebee',
-        border: `2px solid ${results.is_eligible ? '#4caf50' : '#f44336'}`,
+        backgroundColor: '#e3f2fd',
+        border: '2px solid #1976d2',
         borderRadius: '8px'
       }}>
-        <h2 style={{ color: results.is_eligible ? '#2e7d32' : '#c62828', marginTop: 0 }}>
-          {results.is_eligible ? '✓ You are eligible for oral AOMs' : '✗ Not Eligible'}
+        <h2 style={{ color: '#1565c0', marginTop: 0 }}>
+          Screening Completed
         </h2>
-        <p style={{ fontSize: '16px' }}>{results.eligibility_message}</p>
         <p style={{ fontSize: '16px', marginTop: '10px' }}>
           <strong>BMI Category:</strong> {results.bmi_category}
         </p>
@@ -118,7 +117,7 @@ const ScreeningResults: React.FC = () => {
       )}
 
       {/* Medication Recommendations */}
-      {results.is_eligible && results.recommended_drugs.length > 0 && (
+      {results.recommended_drugs.length > 0 && (
         <section style={{ marginBottom: '30px' }}>
           <h2>Recommended Medications</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>
@@ -144,25 +143,6 @@ const ScreeningResults: React.FC = () => {
           </div>
         </section>
       )}
-
-      {/* Screening Process Details */}
-      <section style={{
-        marginBottom: '30px',
-        padding: '20px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px'
-      }}>
-        <h2>How We Determined Your Results</h2>
-        <ol style={{ marginTop: '15px' }}>
-          {results.screening_logic.map((step, index) => (
-            <li key={index} style={{ marginBottom: '15px' }}>
-              <strong>{step.step}</strong>
-              <br />
-              <span style={{ color: '#666' }}>{step.result}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
 
       {/* Next Steps */}
       <section style={{
