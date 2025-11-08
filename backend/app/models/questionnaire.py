@@ -25,32 +25,23 @@ class Questionnaire(Base):
     gender = Column(String, nullable=False)
     contact_number = Column(String, nullable=True)
     is_childbearing_age_woman = Column(Boolean, nullable=True)
-
-    # Section II: Eligibility Assessment
-    has_medical_evaluation = Column(Boolean, nullable=False)
-    attempted_lifestyle_modifications = Column(Boolean, nullable=False)
-    has_reliable_contraception = Column(Boolean, nullable=True)
-    bariatric_surgery_status = Column(String, nullable=True)  # "yes", "no", "not_applicable"
-
-    # Section III: BMI Information
     height_ft = Column(Integer, nullable=False)
     height_in = Column(Integer, nullable=False)
     weight_lb = Column(Float, nullable=False)
     bmi = Column(Float, nullable=True)  # Calculated
-    comorbidities = Column(JSON, nullable=True)  # List of comorbidities
 
-    # Section IV: Obesity-Related Symptoms
-    symptoms = Column(JSON, nullable=True)  # List of symptoms
+    # Section II: Eating Habits & Feelings
+    eating_habits = Column(JSON, nullable=True)  # List of eating habits
 
-    # Section V: Medical Conditions & Health Status
+    # Section III: Medical Conditions & Health Status
     health_conditions = Column(JSON, nullable=True)  # List of health conditions
 
-    # Section VI: Medication and Allergy History
+    # Section IV: Medication and Allergy History
     current_medications = Column(JSON, nullable=True)  # List of medications
     has_drug_allergies = Column(Boolean, nullable=False)
     drug_allergies = Column(JSON, nullable=True)  # List of allergies
 
-    # Section VII: Additional Remarks
+    # Section V: Additional Remarks
     additional_remarks = Column(String, nullable=True)
 
     # Metadata
