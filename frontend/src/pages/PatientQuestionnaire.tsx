@@ -12,6 +12,7 @@ const PatientQuestionnaire: React.FC = () => {
     // Section I: Basic Information
     age: '',
     gender: '',
+    contact_number: '',
     is_childbearing_age_woman: false,
     height_ft: '',
     height_in: '',
@@ -51,6 +52,7 @@ const PatientQuestionnaire: React.FC = () => {
       const questionnaireResponse = await api.createQuestionnaire({
         age: parseInt(formData.age),
         gender: formData.gender,
+        contact_number: formData.contact_number || null,
         is_childbearing_age_woman: formData.is_childbearing_age_woman,
         height_ft: parseInt(formData.height_ft),
         height_in: parseInt(formData.height_in),
