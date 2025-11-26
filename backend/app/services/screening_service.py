@@ -188,7 +188,7 @@ class ScreeningService:
 
             # Row 11: Psychiatric disorders (bipolar disorder, stable) → Flag for psychiatrist clearance
             elif condition == "psychiatric_treatment":
-                drugs_to_flag = [DrugName.PHENTERMINE, DrugName.VYVANSE]
+                drugs_to_flag = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA, DrugName.CONTRAVE]
                 for drug in drugs_to_flag:
                     if drug not in relative_warnings:
                         relative_warnings[drug] = "⚠️ RELATIVE: Psychiatric disorders (bipolar, stable) - Must confirm with psychiatrist. Attach written approval before prescription."
