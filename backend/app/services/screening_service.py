@@ -1,11 +1,17 @@
 """
 AOM Screening Service
 Implements the 2-step screening mechanism from the new questionnaire
+Updated to distinguish ABSOLUTE vs RELATIVE contraindications
 """
 
 from typing import Dict, List, Tuple, Any
 from enum import Enum
 
+
+class ContraindicationType(str, Enum):
+    """Types of contraindications"""
+    ABSOLUTE = "absolute"  # Hard eliminate
+    RELATIVE = "relative"  # Caution/requires clearance
 
 class DrugName(str, Enum):
     """Available medications"""
@@ -48,97 +54,146 @@ class ScreeningService:
 
     @staticmethod
     def apply_first_step_exclusions(
-        health_conditions: List[str]
-    ) -> Tuple[List[str], Dict[str, str]]:
+        health_conditions: List[str],
+        condition_control_status: Dict[str, str] = None
+    ) -> Tuple[List[str], Dict[str, str], Dict[str, str]]:
         """
-        First-Step: Health Status Exclusions Based on Table 1
-        Returns: (remaining_drugs, excluded_drugs_with_reasons)
+        First-Step: Health Status Exclusions Based on Table 1 from AMO Questionnaire Document
+        Returns: (remaining_drugs, absolute_exclusions, relative_warnings)
+
+        - Absolute exclusions: Hard eliminate from drug pool
+        - Relative warnings: Keep in pool but flag for caution/clearance
+
+        Table 1 has exactly 11 rows:
+        Row 1-9: ABSOLUTE contraindications (hard remove)
+        Row 10-11: RELATIVE contraindications (flag for caution)
         """
         remaining_drugs = INITIAL_DRUG_POOL.copy()
-        excluded = {}
+        absolute_exclusions = {}  # Hard eliminate
+        relative_warnings = {}     # Caution/requires clearance
+
+        # Default to empty dict if not provided
+        if condition_control_status is None:
+            condition_control_status = {}
+
+        # 🚨 PREGNANCY CHECK: Per document - "Checking pregnancy disqualifies the patient from AOM criteria"
+        if "pregnancy_breastfeeding" in health_conditions:
+            for drug in INITIAL_DRUG_POOL:
+                absolute_exclusions[drug] = "⛔ ABSOLUTE: Current pregnancy disqualifies ALL anti-obesity medications. Reassess postpartum."
+            return [], absolute_exclusions, relative_warnings
 
         for condition in health_conditions:
-            # Row 1: Hypertension
-            if condition == "hypertension":
-                drugs_to_remove = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA, DrugName.CONTRAVE, DrugName.BUPROPION]
-                for drug in drugs_to_remove:
-                    if drug in remaining_drugs:
-                        remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: Hypertension"
+            # ===== TABLE 1 - ABSOLUTE CONTRAINDICATIONS (Rows 1-9) =====
 
-            # Row 2: Recurrent kidney stones OR Planning pregnancy (within 3 months) OR Currently pregnant
-            elif condition in ["recurrent_kidney_stones", "planning_pregnancy", "pregnancy_breastfeeding"]:
+            # Row 1 & Row 10: Hypertension (depends on controlled/uncontrolled status)
+            # - Uncontrolled → ABSOLUTE: Remove 5 drugs
+            # - Controlled → RELATIVE: Flag for caution (NOT REMOVED)
+            if condition == "hypertension":
+                control_status = condition_control_status.get("hypertension", "uncontrolled")
+
+                if control_status == "controlled":
+                    # Row 10: Controlled hypertension → FLAG for caution (NOT REMOVED)
+                    drugs_to_flag = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA, DrugName.CONTRAVE, DrugName.BUPROPION]
+                    for drug in drugs_to_flag:
+                        if drug not in relative_warnings:
+                            relative_warnings[drug] = "⚠️ RELATIVE: Hypertension (controlled) - Use with BP re-evaluation. Adjust dosage if needed."
+                else:
+                    # Row 1: Uncontrolled hypertension → ABSOLUTE removal
+                    drugs_to_remove = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA, DrugName.CONTRAVE, DrugName.BUPROPION]
+                    for drug in drugs_to_remove:
+                        if drug in remaining_drugs:
+                            remaining_drugs.remove(drug)
+                            absolute_exclusions[drug] = "⛔ ABSOLUTE: Hypertension (uncontrolled) - Contraindicated. Hard eliminate."
+
+            # Row 2: Recurrent kidney stones/Planning pregnancy/Currently pregnant → Remove Qsymia, Topiramate
+            elif condition == "recurrent_kidney_stones":
                 drugs_to_remove = [DrugName.QSYMIA, DrugName.TOPIRAMATE]
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = f"Excluded: {condition.replace('_', ' ').title()}"
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: Recurrent kidney stones - Topiramate increases stone risk. Hard eliminate."
 
-            # Row 3: Taking Tamoxifen
+            elif condition == "planning_pregnancy":
+                drugs_to_remove = [DrugName.QSYMIA, DrugName.TOPIRAMATE]
+                for drug in drugs_to_remove:
+                    if drug in remaining_drugs:
+                        remaining_drugs.remove(drug)
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: Planning pregnancy within 3 months - Teratogenic risk. Hard eliminate."
+
+            # Row 3: Taking Tamoxifen → Remove Contrave, Bupropion
             elif condition == "taking_tamoxifen":
                 drugs_to_remove = [DrugName.CONTRAVE, DrugName.BUPROPION]
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: Currently taking Tamoxifen"
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: Taking Tamoxifen - Drug interaction. Hard eliminate."
 
-            # Row 4: ADD/ADHD
+            # Row 4: ADD/ADHD (under medication) → Remove Phentermine, Vyvanse, Qsymia
             elif condition == "adhd":
                 drugs_to_remove = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA]
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: ADD/ADHD"
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: ADD/ADHD under medication treatment - Contraindicated. Hard eliminate."
 
-            # Row 5: Glaucoma
+            # Row 5: Glaucoma (not stable) → Remove Phentermine, Qsymia, Topiramate, Vyvanse
             elif condition == "glaucoma":
                 drugs_to_remove = [DrugName.PHENTERMINE, DrugName.QSYMIA, DrugName.TOPIRAMATE, DrugName.VYVANSE]
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: Glaucoma"
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: Glaucoma (not evaluated as stable) - Contraindicated. Hard eliminate."
 
-            # Row 6: Stroke OR Intracranial hypertension OR Cardiovascular disease
-            elif condition in ["history_stroke", "intracranial_hypertension", "heart_disease"]:
+            # Row 6: History of stroke/Intracranial hypertension/Cardiovascular disease → Remove Phentermine, Vyvanse, Qsymia
+            elif condition in ["cva_stroke", "intracranial_hypertension", "cad", "mi",
+                              "cerebrovascular_disease", "pad"]:
+                drugs_to_remove = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA]
+                condition_display = condition.replace('_', ' ').title()
+                for drug in drugs_to_remove:
+                    if drug in remaining_drugs:
+                        remaining_drugs.remove(drug)
+                        absolute_exclusions[drug] = f"⛔ ABSOLUTE: {condition_display} - Cardiovascular contraindication. Hard eliminate."
+
+            # Row 7: History of substance abuse → Remove Phentermine, Vyvanse, Qsymia
+            elif condition == "substance_abuse":
                 drugs_to_remove = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA]
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = f"Excluded: {condition.replace('_', ' ').title()}"
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: Substance abuse history - Controlled substance risk. Hard eliminate."
 
-            # Row 7: Psychiatric disorders
-            elif condition == "psychiatric_treatment":
-                drugs_to_remove = [DrugName.CONTRAVE, DrugName.BUPROPION, DrugName.TOPIRAMATE, DrugName.QSYMIA]
-                for drug in drugs_to_remove:
-                    if drug in remaining_drugs:
-                        remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: Psychiatric disorders"
-
-            # Row 8: History of substance abuse
-            elif condition == "history_drug_abuse":
-                drugs_to_remove = [DrugName.PHENTERMINE, DrugName.VYVANSE, DrugName.QSYMIA]
-                for drug in drugs_to_remove:
-                    if drug in remaining_drugs:
-                        remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: History of substance abuse"
-
-            # Row 9: Thyroid dysfunction (hyperthyroidism/hypothyroidism)
+            # Row 8: Hyperthyroidism → Remove Phentermine, Qsymia
             elif condition == "hyperthyroidism":
                 drugs_to_remove = [DrugName.PHENTERMINE, DrugName.QSYMIA]
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = "Excluded: Thyroid dysfunction"
+                        absolute_exclusions[drug] = "⛔ ABSOLUTE: Hyperthyroidism - Contraindicated. Hard eliminate."
 
-            # Row 10: Medullary thyroid cancer OR Pancreatitis OR Gastroparesis
-            elif condition in ["thyroid_cancer", "history_pancreatitis", "gastroparesis"]:
+            # Row 9: Medullary thyroid cancer/Pancreatitis/Gastroparesis → Remove Wegovy, Zepbound
+            elif condition in ["medullary_thyroid_cancer", "pancreatitis", "gastroparesis"]:
                 drugs_to_remove = [DrugName.WEGOVY, DrugName.ZEPBOUND]
+                condition_display = condition.replace('_', ' ').title()
                 for drug in drugs_to_remove:
                     if drug in remaining_drugs:
                         remaining_drugs.remove(drug)
-                        excluded[drug] = f"Excluded: {condition.replace('_', ' ').title()}"
+                        absolute_exclusions[drug] = f"⛔ ABSOLUTE: {condition_display} - GLP-1 contraindicated. Hard eliminate."
 
-        return remaining_drugs, excluded
+            # ===== TABLE 1 - RELATIVE CONTRAINDICATIONS (Rows 10-11) =====
+            # These are FLAGS, not removals - drugs stay in pool with warnings
+
+            # Row 10: Hypertension (controlled) → Flag for caution (NOT REMOVED)
+            # Note: This is handled separately - will need controlled/uncontrolled status from frontend
+            # For now, leaving as placeholder for future implementation
+
+            # Row 11: Psychiatric disorders (bipolar disorder, stable) → Flag for psychiatrist clearance
+            elif condition == "psychiatric_treatment":
+                drugs_to_flag = [DrugName.PHENTERMINE, DrugName.VYVANSE]
+                for drug in drugs_to_flag:
+                    if drug not in relative_warnings:
+                        relative_warnings[drug] = "⚠️ RELATIVE: Psychiatric disorders (bipolar, stable) - Must confirm with psychiatrist. Attach written approval before prescription."
+
+        return remaining_drugs, absolute_exclusions, relative_warnings
 
     @staticmethod
     def apply_second_step_ordering(
@@ -198,8 +253,13 @@ class ScreeningService:
 
     def run_screening(self, questionnaire_data: Dict) -> Dict[str, Any]:
         """
-        Main screening function - runs the 2-step mechanism
-        Returns complete screening results
+        Main screening function - runs the 2-step mechanism per AMO Questionnaire Document
+
+        Eligibility Gate: Only "no comorbidities + BMI <30" = ineligible
+        - BMI ≥30: Eligible (even without comorbidities)
+        - BMI 27-29.9 + comorbidities: Eligible
+
+        Returns complete screening results with ABSOLUTE and RELATIVE contraindications
         """
         result = {
             "is_eligible": True,
@@ -207,7 +267,8 @@ class ScreeningService:
             "bmi": None,
             "bmi_category": None,
             "initial_drug_pool": INITIAL_DRUG_POOL.copy(),
-            "excluded_drugs": {},
+            "absolute_exclusions": {},      # Hard eliminated
+            "relative_warnings": {},        # Requires caution/clearance
             "recommended_drugs": [],
             "warnings": [],
             "screening_steps": []
@@ -220,18 +281,64 @@ class ScreeningService:
             questionnaire_data["weight_lb"]
         )
         result["bmi"] = bmi
-
-        # Store BMI value
         result["bmi_category"] = str(bmi)
 
-        # FIRST-STEP: Apply health status exclusions (Table 1)
+        # ⛔ ELIGIBILITY GATE: Per AMO Questionnaire Document
+        # "Only people with 'no comorbidities + BMI <30' are not eligible for oral AOM"
+        # "those with BMI ≥30 may can go to next step even with no comorbidities"
         health_conditions = questionnaire_data.get("health_conditions", [])
-        remaining_drugs, excluded = self.apply_first_step_exclusions(health_conditions)
 
-        result["excluded_drugs"] = excluded
+        # Check if patient has any comorbidities (excluding "none")
+        has_comorbidities = len([c for c in health_conditions if c != "none"]) > 0
+
+        # Only ineligible if BOTH conditions are true: no comorbidities AND BMI < 30
+        if not has_comorbidities and bmi < 30:
+            result["is_eligible"] = False
+            result["eligibility_message"] = "Not eligible for oral anti-obesity medications"
+            result["warnings"] = [
+                "⛔ BMI Requirement Not Met: Your BMI is below 30 with no comorbidities.",
+                "Oral anti-obesity medications are indicated for individuals with:",
+                "• BMI ≥ 30, OR",
+                "• BMI ≥ 27 with weight-related comorbidities (e.g., hypertension, diabetes, sleep apnea)",
+                "",
+                "Your BMI: {:.2f}".format(bmi),
+                "",
+                "💡 Recommendation: Focus on lifestyle modifications including diet and exercise.",
+                "Please consult with your healthcare provider for personalized weight management strategies."
+            ]
+            result["screening_steps"].append({
+                "step": "BMI Eligibility Gate",
+                "result": f"BMI {bmi:.2f} < 30 with no comorbidities: Not eligible. No further screening performed."
+            })
+            # Return early - skip all comorbidity and drug screening
+            return result
+
+        # Eligible: Either BMI ≥30 OR BMI 27-29.9 with comorbidities
+        eligibility_reason = "BMI ≥ 30" if bmi >= 30 else f"BMI {bmi:.2f} ≥ 27 with comorbidities"
         result["screening_steps"].append({
-            "step": "First-Step - Health Status Exclusions",
-            "result": f"Excluded {len(excluded)} medications based on health conditions. Remaining: {len(remaining_drugs)}"
+            "step": "BMI Eligibility Gate",
+            "result": f"{eligibility_reason}: Passed eligibility gate. Proceeding to comorbidity assessment."
+        })
+
+        # FIRST-STEP: Apply health status exclusions (Table 1)
+        condition_control_status = questionnaire_data.get("condition_control_status", {})
+        remaining_drugs, absolute_exclusions, relative_warnings = self.apply_first_step_exclusions(
+            health_conditions,
+            condition_control_status
+        )
+
+        result["absolute_exclusions"] = absolute_exclusions
+        result["relative_warnings"] = relative_warnings
+
+        # Create comprehensive warnings list
+        if absolute_exclusions:
+            result["warnings"].append(f"⛔ {len(absolute_exclusions)} medications have ABSOLUTE contraindications and are hard eliminated.")
+        if relative_warnings:
+            result["warnings"].append(f"⚠️ {len(relative_warnings)} medications have RELATIVE contraindications. Caution/clearance required.")
+
+        result["screening_steps"].append({
+            "step": "First-Step - Health Status Exclusions (Table 1)",
+            "result": f"ABSOLUTE exclusions: {len(absolute_exclusions)}. RELATIVE warnings: {len(relative_warnings)}. Remaining eligible: {len(remaining_drugs)}"
         })
 
         # SECOND-STEP: Apply eating habits-based ordering

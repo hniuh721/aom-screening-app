@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
 from datetime import datetime
 from app.models.questionnaire import QuestionnaireStatus
 
@@ -16,6 +16,8 @@ class QuestionnaireBase(BaseModel):
 
     # Section III: Medical Conditions & Health Status
     health_conditions: Optional[List[str]] = []
+    condition_control_status: Optional[Dict[str, str]] = None  # Maps condition key to "controlled"/"uncontrolled"
+    previous_aom_history: Optional[str] = None
 
     # Section IV: Medication and Allergy History
     current_medications: Optional[List[str]] = []
@@ -41,6 +43,8 @@ class QuestionnaireUpdate(BaseModel):
     weight_lb: Optional[float] = None
     eating_habits: Optional[List[str]] = None
     health_conditions: Optional[List[str]] = None
+    condition_control_status: Optional[Dict[str, str]] = None
+    previous_aom_history: Optional[str] = None
     current_medications: Optional[List[str]] = None
     has_drug_allergies: Optional[bool] = None
     drug_allergies: Optional[List[str]] = None

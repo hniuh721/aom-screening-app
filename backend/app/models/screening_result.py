@@ -24,7 +24,9 @@ class ScreeningResult(Base):
     # Screening steps details
     bmi_category = Column(String, nullable=True)
     initial_drug_pool = Column(JSON, nullable=True)  # List of initial medications
-    excluded_drugs = Column(JSON, nullable=True)  # Drugs excluded with reasons
+    excluded_drugs = Column(JSON, nullable=True)  # Drugs excluded with reasons (LEGACY - now absolute_exclusions)
+    absolute_exclusions = Column(JSON, nullable=True)  # NEW: Hard eliminated medications
+    relative_warnings = Column(JSON, nullable=True)    # NEW: Caution/clearance required
     recommended_drugs = Column(JSON, nullable=True)  # Final recommended drugs with priority
 
     # Detailed reasoning for doctors

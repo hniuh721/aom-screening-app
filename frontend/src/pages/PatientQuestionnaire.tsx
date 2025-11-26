@@ -23,6 +23,7 @@ const PatientQuestionnaire: React.FC = () => {
 
     // Section III: Medical Conditions & Health Status
     health_conditions: [] as string[],
+    previous_aom_history: '',
 
     // Section IV: Medications
     current_medications_text: '',
@@ -310,8 +311,10 @@ const PatientQuestionnaire: React.FC = () => {
         <section style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
           <h2>III. Medical Conditions & Health Status</h2>
           <p style={{ fontStyle: 'italic', marginBottom: '15px' }}>
-            (Multiple selections allowed; please fill truthfully to avoid medication risks)
+            (Multiple selections allowed; please fill truthfully to avoid medication risks. For each condition, please indicate if it is controlled or uncontrolled.)
           </p>
+
+          <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px', marginTop: '20px' }}>Key Comorbidities (for insurance eligibility):</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label>
               <input
@@ -327,15 +330,7 @@ const PatientQuestionnaire: React.FC = () => {
                 checked={formData.health_conditions.includes('dyslipidemia')}
                 onChange={(e) => handleCheckboxChange('health_conditions', 'dyslipidemia', e.target.checked)}
               />
-              {' '}Dyslipidemia (HDL &lt; 50 mg/dL for women, HDL &lt; 40 mg/dL for men)
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={formData.health_conditions.includes('coronary_artery_disease')}
-                onChange={(e) => handleCheckboxChange('health_conditions', 'coronary_artery_disease', e.target.checked)}
-              />
-              {' '}Coronary Artery Disease (CAD)
+              {' '}Dyslipidemia / Hyperlipidemia (HDL &lt; 50 mg/dL for women, HDL &lt; 40 mg/dL for men)
             </label>
             <label>
               <input
@@ -364,10 +359,34 @@ const PatientQuestionnaire: React.FC = () => {
             <label>
               <input
                 type="checkbox"
-                checked={formData.health_conditions.includes('gerd')}
-                onChange={(e) => handleCheckboxChange('health_conditions', 'gerd', e.target.checked)}
+                checked={formData.health_conditions.includes('fatty_liver')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'fatty_liver', e.target.checked)}
               />
-              {' '}Gastroesophageal Reflux Disease (GERD)
+              {' '}Fatty Liver / MASH (Metabolic dysfunction-Associated Steatohepatitis)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('cirrhosis')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'cirrhosis', e.target.checked)}
+              />
+              {' '}Cirrhosis
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('chronic_kidney_disease')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'chronic_kidney_disease', e.target.checked)}
+              />
+              {' '}Chronic Kidney Disease (CKD)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('liver_disease')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'liver_disease', e.target.checked)}
+              />
+              {' '}Liver Disease
             </label>
             <label>
               <input
@@ -375,8 +394,64 @@ const PatientQuestionnaire: React.FC = () => {
                 checked={formData.health_conditions.includes('no_comorbidities')}
                 onChange={(e) => handleCheckboxChange('health_conditions', 'no_comorbidities', e.target.checked)}
               />
-              {' '}No above comorbidities (temporarily ineligible for oral AOMs)
+              {' '}No above comorbidities (temporarily ineligible for oral AOMs if BMI &lt; 30)
             </label>
+          </div>
+
+          <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px', marginTop: '20px' }}>Cardiovascular History (please specify events for insurance documentation):</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('cad')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'cad', e.target.checked)}
+              />
+              {' '}Coronary Artery Disease (CAD)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('myocardial_infarction')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'myocardial_infarction', e.target.checked)}
+              />
+              {' '}Myocardial Infarction (MI / Heart Attack)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('cerebrovascular_disease')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'cerebrovascular_disease', e.target.checked)}
+              />
+              {' '}Cerebrovascular Disease
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('cva_stroke')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'cva_stroke', e.target.checked)}
+              />
+              {' '}CVA (Cerebrovascular Accident / Stroke)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('peripheral_arterial_disease')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'peripheral_arterial_disease', e.target.checked)}
+              />
+              {' '}Peripheral Arterial Disease (PAD)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('heart_failure')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'heart_failure', e.target.checked)}
+              />
+              {' '}Heart Failure
+            </label>
+          </div>
+
+          <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px', marginTop: '20px' }}>Contraindications & Relative Contraindications:</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label>
               <input
                 type="checkbox"
@@ -392,22 +467,6 @@ const PatientQuestionnaire: React.FC = () => {
                 onChange={(e) => handleCheckboxChange('health_conditions', 'glaucoma', e.target.checked)}
               />
               {' '}Glaucoma
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={formData.health_conditions.includes('history_stroke')}
-                onChange={(e) => handleCheckboxChange('health_conditions', 'history_stroke', e.target.checked)}
-              />
-              {' '}Stroke
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={formData.health_conditions.includes('heart_disease')}
-                onChange={(e) => handleCheckboxChange('health_conditions', 'heart_disease', e.target.checked)}
-              />
-              {' '}Cardiovascular disease (e.g., coronary artery disease, heart failure)
             </label>
             <label>
               <input
@@ -431,7 +490,23 @@ const PatientQuestionnaire: React.FC = () => {
                 checked={formData.health_conditions.includes('psychiatric_treatment')}
                 onChange={(e) => handleCheckboxChange('health_conditions', 'psychiatric_treatment', e.target.checked)}
               />
-              {' '}Psychiatric disorders (e.g., anxiety disorder, bipolar disorder, depression)
+              {' '}Psychiatric disorders (e.g., anxiety disorder, depression)
+            </label>
+            <label style={{ marginLeft: '20px', fontWeight: 'bold', color: '#d32f2f' }}>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('bipolar_disorder')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'bipolar_disorder', e.target.checked)}
+              />
+              {' '}🚨 Bipolar Disorder (requires psychiatric clearance for stimulants)
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('prior_eating_disorder')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'prior_eating_disorder', e.target.checked)}
+              />
+              {' '}History of eating disorders (anorexia or bulimia)
             </label>
             <label>
               <input
@@ -440,6 +515,14 @@ const PatientQuestionnaire: React.FC = () => {
                 onChange={(e) => handleCheckboxChange('health_conditions', 'thyroid_cancer', e.target.checked)}
               />
               {' '}Medullary thyroid cancer
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('hyperthyroidism')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'hyperthyroidism', e.target.checked)}
+              />
+              {' '}Hyperthyroidism
             </label>
             <label>
               <input
@@ -492,11 +575,48 @@ const PatientQuestionnaire: React.FC = () => {
             <label>
               <input
                 type="checkbox"
-                checked={formData.health_conditions.includes('hyperthyroidism')}
-                onChange={(e) => handleCheckboxChange('health_conditions', 'hyperthyroidism', e.target.checked)}
+                checked={formData.health_conditions.includes('taking_maoi')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'taking_maoi', e.target.checked)}
               />
-              {' '}Thyroid dysfunction (hyperthyroidism/hypothyroidism)
+              {' '}Currently taking MAOI (Monoamine Oxidase Inhibitor) medications
             </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('taking_glp_or_dm2_meds')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'taking_glp_or_dm2_meds', e.target.checked)}
+              />
+              {' '}Currently taking other GLP-1 agonists or diabetes medications
+            </label>
+          </div>
+
+          <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px', marginTop: '20px' }}>Precautions for GLP medications:</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.health_conditions.includes('gerd')}
+                onChange={(e) => handleCheckboxChange('health_conditions', 'gerd', e.target.checked)}
+              />
+              {' '}Gastroesophageal Reflux Disease (GERD)
+            </label>
+          </div>
+
+          <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px', marginTop: '20px' }}>Previous AOM Experience:</h3>
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px' }}>
+              Have you previously tried any anti-obesity medications? If yes, please list them and indicate if they failed, were not tolerated, or other reasons for discontinuation:
+            </label>
+            <textarea
+              value={formData.previous_aom_history || ''}
+              onChange={(e) => setFormData({ ...formData, previous_aom_history: e.target.value })}
+              placeholder="Example: Phentermine - caused insomnia and discontinued; Wegovy - not tolerated due to nausea"
+              rows={3}
+              style={{ width: '100%', padding: '8px', fontSize: '14px' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label>
               <input
                 type="checkbox"

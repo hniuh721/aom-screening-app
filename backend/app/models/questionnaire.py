@@ -35,6 +35,8 @@ class Questionnaire(Base):
 
     # Section III: Medical Conditions & Health Status
     health_conditions = Column(JSON, nullable=True)  # List of health conditions
+    condition_control_status = Column(JSON, nullable=True)  # Dict mapping condition key to "controlled"/"uncontrolled"
+    previous_aom_history = Column(String, nullable=True)  # Previously tried AOMs
 
     # Section IV: Medication and Allergy History
     current_medications = Column(JSON, nullable=True)  # List of medications

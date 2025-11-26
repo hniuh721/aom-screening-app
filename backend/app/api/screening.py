@@ -57,6 +57,7 @@ def run_screening(
         "weight_lb": questionnaire.weight_lb,
         "eating_habits": questionnaire.eating_habits or [],
         "health_conditions": questionnaire.health_conditions or [],
+        "condition_control_status": questionnaire.condition_control_status or {},  # NEW: Include control status
     }
 
     # Run screening algorithm
@@ -64,6 +65,10 @@ def run_screening(
     screening_result = screener.run_screening(questionnaire_data)
 
     # Save screening result to database
+    # Helper function to clean drug names (remove "DrugName." prefix)
+    def clean_drug_name(drug_str):
+        return str(drug_str).replace("DrugName.", "")
+
     db_result = ScreeningResult(
         questionnaire_id=questionnaire.id,
         patient_id=questionnaire.patient_id,
@@ -73,9 +78,11 @@ def run_screening(
         gender=questionnaire.gender,
         is_childbearing_age_woman=questionnaire.is_childbearing_age_woman,
         bmi_category=screening_result["bmi_category"],
-        initial_drug_pool=[str(drug) for drug in screening_result["initial_drug_pool"]],
-        excluded_drugs={str(k): v for k, v in screening_result["excluded_drugs"].items()},
-        recommended_drugs=screening_result["recommended_drugs"],
+        initial_drug_pool=[clean_drug_name(drug) for drug in screening_result["initial_drug_pool"]],
+        excluded_drugs={clean_drug_name(k): v for k, v in screening_result.get("absolute_exclusions", {}).items()},  # Legacy field
+        absolute_exclusions={clean_drug_name(k): v for k, v in screening_result.get("absolute_exclusions", {}).items()},  # NEW
+        relative_warnings={clean_drug_name(k): v for k, v in screening_result.get("relative_warnings", {}).items()},      # NEW
+        recommended_drugs=[{**drug, "medication": clean_drug_name(drug["medication"])} for drug in screening_result["recommended_drugs"]],
         screening_logic=screening_result["screening_steps"],
         warnings=screening_result["warnings"],
     )

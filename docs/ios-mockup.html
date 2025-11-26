@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>AOM Screening - iOS Mockup</title>
+    <style>
+        /* iOS System Font */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f2f2f7;
+            color: #000;
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* iOS Status Bar */
+        .status-bar {
+            height: 44px;
+            background: linear-gradient(to bottom, #000 0%, #000 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .status-bar-left {
+            display: flex;
+            gap: 4px;
+        }
+
+        .status-bar-right {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .signal-bars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .bar {
+            width: 3px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .bar:nth-child(1) { height: 4px; }
+        .bar:nth-child(2) { height: 6px; }
+        .bar:nth-child(3) { height: 8px; }
+        .bar:nth-child(4) { height: 10px; }
+
+        /* iOS Navigation Bar */
+        .nav-bar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 44px;
+            z-index: 999;
+            min-height: 44px;
+        }
+
+        .nav-title {
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            flex: 1;
+            color: #000;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #007AFF;
+            font-size: 17px;
+            font-weight: 400;
+            padding: 0;
+            cursor: pointer;
+            min-width: 44px;
+            text-align: left;
+        }
+
+        .nav-button.right {
+            text-align: right;
+        }
+
+        /* Container */
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+            background: #f2f2f7;
+            min-height: calc(100vh - 88px);
+            padding-bottom: 20px;
+        }
+
+        /* iOS Card */
+        .ios-card {
+            background: #ffffff;
+            border-radius: 10px;
+            margin: 8px 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ios-card-header {
+            padding: 16px;
+            border-bottom: 0.5px solid #e5e5ea;
+            background: #f9f9f9;
+        }
+
+        .ios-card-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .ios-card-header p {
+            font-size: 15px;
+            color: #8e8e93;
+            margin: 0;
+        }
+
+        .ios-card-content {
+            padding: 16px;
+        }
+
+        /* iOS Form Elements */
+        .ios-form-group {
+            margin-bottom: 16px;
+        }
+
+        .ios-label {
+            display: block;
+            font-size: 17px;
+            font-weight: 400;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .ios-label.required::after {
+            content: " *";
+            color: #ff3b30;
+        }
+
+        .ios-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 17px;
+            background: #f2f2f7;
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .ios-input:focus {
+            outline: none;
+            background: #e5e5ea;
+        }
+
+        .ios-input-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ios-input-group .ios-input {
+            flex: 1;
+        }
+
+        /* iOS Segmented Control */
+        .ios-segmented-control {
+            display: flex;
+            background: #e5e5ea;
+            border-radius: 8px;
+            padding: 2px;
+            gap: 2px;
+        }
+
+        .ios-segment {
+            flex: 1;
+            padding: 8px 16px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #007AFF;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ios-segment.active {
+            background: #ffffff;
+            color: #000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* iOS Switch */
+        .ios-switch-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+
+        .ios-switch-label {
+            font-size: 17px;
+            color: #000;
+            flex: 1;
+        }
+
+        .ios-switch {
+            width: 51px;
+            height: 31px;
+            background: #e5e5ea;
+            border-radius: 31px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .ios-switch:checked {
+            background: #34c759;
+        }
+
+        .ios-switch::after {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%;
+            background: #ffffff;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .ios-switch:checked::after {
+            transform: translateX(20px);
+        }
+
+        /* iOS Checkbox List */
+        .ios-checkbox-list {
+            list-style: none;
+        }
+
+        .ios-checkbox-item {
+            padding: 12px 16px;
+            border-bottom: 0.5px solid #e5e5ea;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .ios-checkbox-item:last-child {
+            border-bottom: none;
+        }
+
+        .ios-checkbox-item:active {
+            background: #e5e5ea;
+        }
+
+        .ios-checkbox-item-label {
+            flex: 1;
+            font-size: 17px;
+            color: #000;
+            margin-left: 12px;
+            line-height: 1.4;
+        }
+
+        .ios-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #007AFF;
+            border-radius: 4px;
+            position: relative;
+            flex-shrink: 0;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .ios-checkbox:checked {
+            background: #007AFF;
+        }
+
+        .ios-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* iOS Textarea */
+        .ios-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 17px;
+            background: #f2f2f7;
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .ios-textarea:focus {
+            outline: none;
+            background: #e5e5ea;
+        }
+
+        /* iOS Button */
+        .ios-button {
+            width: calc(100% - 32px);
+            margin: 16px;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #ffffff;
+            background: #007AFF;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .ios-button:active {
+            opacity: 0.6;
+        }
+
+        .ios-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ios-button.secondary {
+            background: #e5e5ea;
+            color: #000;
+        }
+
+        /* iOS Alert/Info Box */
+        .ios-alert {
+            margin: 16px;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .ios-alert.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
+
+        .ios-alert.warning {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+
+        .ios-alert.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+
+        /* Results Page Styles */
+        .results-header {
+            text-align: center;
+            padding: 24px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .results-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .results-header p {
+            font-size: 17px;
+            opacity: 0.9;
+        }
+
+        .medication-card {
+            background: #ffffff;
+            border-radius: 10px;
+            margin: 8px 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .medication-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 8px;
+        }
+
+        .medication-reasoning {
+            font-size: 15px;
+            color: #8e8e93;
+            line-height: 1.5;
+        }
+
+        .section-divider {
+            height: 8px;
+            background: #f2f2f7;
+            margin: 16px 0;
+        }
+
+        /* Loading Spinner */
+        .ios-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e5ea;
+            border-top-color: #007AFF;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Safe Area Support */
+        @supports (padding: max(0px)) {
+            .container {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Page Navigation */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Helper text */
+        .helper-text {
+            font-size: 13px;
+            color: #8e8e93;
+            margin-top: 4px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-bar-left">
+            <span>9:41</span>
+        </div>
+        <div class="status-bar-right">
+            <div class="signal-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <span style="margin-left: 6px;">100%</span>
+        </div>
+    </div>
+
+    <!-- QUESTIONNAIRE PAGE -->
+    <div id="questionnaire-page" class="page active">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <button class="nav-button" onclick="showPage('home')">Cancel</button>
+            <div class="nav-title">AOM Screening</div>
+            <div style="min-width: 44px;"></div>
+        </div>
+
+        <div class="container">
+            <!-- Instructions Alert -->
+            <div class="ios-alert info">
+                <strong>Instructions:</strong><br>
+                All questions must be answered truthfully. False information may lead to incorrect medication selection and increased health risks.
+            </div>
+
+            <form id="questionnaire-form" onsubmit="handleSubmit(event)">
+                <!-- Section I: Basic Information -->
+                <div class="ios-card">
+                    <div class="ios-card-header">
+                        <h2>I. Basic Information</h2>
+                    </div>
+                    <div class="ios-card-content">
+                        <div class="ios-form-group">
+                            <label class="ios-label required">Age</label>
+                            <input type="number" class="ios-input" id="age" required min="1" max="120" placeholder="Enter your age">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label required">Gender</label>
+                            <div class="ios-segmented-control">
+                                <button type="button" class="ios-segment active" data-value="male" onclick="selectSegment(this, 'gender')">Male</button>
+                                <button type="button" class="ios-segment" data-value="female" onclick="selectSegment(this, 'gender')">Female</button>
+                                <button type="button" class="ios-segment" data-value="other" onclick="selectSegment(this, 'gender')">Other</button>
+                            </div>
+                            <input type="hidden" id="gender" value="male" required>
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">Contact Number</label>
+                            <input type="tel" class="ios-input" id="contact_number" placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="ios-switch-container">
+                            <label class="ios-switch-label">Woman of childbearing age (18-49 years)?</label>
+                            <input type="checkbox" class="ios-switch" id="is_childbearing_age_woman">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label required">Height</label>
+                            <div class="ios-input-group">
+                                <input type="number" class="ios-input" id="height_ft" required min="3" max="8" placeholder="ft">
+                                <input type="number" class="ios-input" id="height_in" required min="0" max="11" placeholder="in">
+                            </div>
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label required">Weight (lb)</label>
+                            <input type="number" class="ios-input" id="weight_lb" required step="0.1" min="50" max="500" placeholder="Enter weight in pounds">
+                            <p class="helper-text">BMI value will be calculated and displayed in the final result</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section II: Eating Habits -->
+                <div class="ios-card">
+                    <div class="ios-card-header">
+                        <h2>II. Eating Habits & Feelings</h2>
+                        <p>Please check all that apply to you</p>
+                    </div>
+                    <div class="ios-card-content">
+                        <ul class="ios-checkbox-list">
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="excessive_appetite">
+                                <label class="ios-checkbox-item-label">Often feel very hungry and hard to control how much I eat</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="lack_of_satiety">
+                                <label class="ios-checkbox-item-label">Don't feel full after eating, and get hungry again soon</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="binge_eating">
+                                <label class="ios-checkbox-item-label">Sometimes eat a lot of food quickly and can't stop myself</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="emotional_eating">
+                                <label class="ios-checkbox-item-label">Eat more when I'm anxious, sad, stressed, or in other mood swings</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="night_eating">
+                                <label class="ios-checkbox-item-label">Eat a lot within 2 hours before bed, or wake up to eat at night</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="frequent_snacking">
+                                <label class="ios-checkbox-item-label">Often eat snacks between regular meals</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="eating_habits" value="none">
+                                <label class="ios-checkbox-item-label">None of the above situations</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section III: Medical Conditions -->
+                <div class="ios-card">
+                    <div class="ios-card-header">
+                        <h2>III. Medical Conditions & Health Status</h2>
+                        <p>Multiple selections allowed; please fill truthfully to avoid medication risks</p>
+                    </div>
+                    <div class="ios-card-content">
+                        <ul class="ios-checkbox-list">
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="hypertension">
+                                <label class="ios-checkbox-item-label">Hypertension</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="dyslipidemia">
+                                <label class="ios-checkbox-item-label">Dyslipidemia (HDL &lt; 50 mg/dL for women, HDL &lt; 40 mg/dL for men)</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="coronary_artery_disease">
+                                <label class="ios-checkbox-item-label">Coronary Artery Disease (CAD)</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="diabetes">
+                                <label class="ios-checkbox-item-label">Type 2 Diabetes Mellitus (DM2)</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="sleep_apnea">
+                                <label class="ios-checkbox-item-label">Obstructive Sleep Apnea (OSA)</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="arthritis">
+                                <label class="ios-checkbox-item-label">Symptomatic arthritis of lower extremities</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="gerd">
+                                <label class="ios-checkbox-item-label">Gastroesophageal Reflux Disease (GERD)</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="recurrent_kidney_stones">
+                                <label class="ios-checkbox-item-label">Recurrent kidney stones</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="glaucoma">
+                                <label class="ios-checkbox-item-label">Glaucoma</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="history_stroke">
+                                <label class="ios-checkbox-item-label">Stroke</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="heart_disease">
+                                <label class="ios-checkbox-item-label">Cardiovascular disease</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="adhd">
+                                <label class="ios-checkbox-item-label">ADD/ADHD</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="psychiatric_treatment">
+                                <label class="ios-checkbox-item-label">Psychiatric disorders</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="pregnancy_breastfeeding">
+                                <label class="ios-checkbox-item-label">Currently pregnant</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="planning_pregnancy">
+                                <label class="ios-checkbox-item-label">Planning to become pregnant within 3 months</label>
+                            </li>
+                            <li class="ios-checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" class="ios-checkbox" name="health_conditions" value="none">
+                                <label class="ios-checkbox-item-label">No above underlying medical conditions</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section IV: Medications -->
+                <div class="ios-card">
+                    <div class="ios-card-header">
+                        <h2>IV. Medication and Allergy History</h2>
+                    </div>
+                    <div class="ios-card-content">
+                        <div class="ios-form-group">
+                            <label class="ios-label">Current Medications</label>
+                            <textarea class="ios-textarea" id="current_medications_text" placeholder="Example: Metformin 500mg - for diabetes control; Vitamin D 1000 IU - daily supplement"></textarea>
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">Do you have any drug allergies?</label>
+                            <div class="ios-segmented-control">
+                                <button type="button" class="ios-segment" data-value="yes" onclick="selectSegment(this, 'drug_allergies')">Yes</button>
+                                <button type="button" class="ios-segment active" data-value="no" onclick="selectSegment(this, 'drug_allergies')">No</button>
+                            </div>
+                            <input type="hidden" id="has_drug_allergies" value="false">
+                        </div>
+
+                        <div class="ios-form-group" id="allergies-detail" style="display: none;">
+                            <label class="ios-label">List allergic drugs and reactions</label>
+                            <textarea class="ios-textarea" id="drug_allergies_text" placeholder="Example: Penicillin - rash and itching; Sulfa drugs - difficulty breathing"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section V: Additional Remarks -->
+                <div class="ios-card">
+                    <div class="ios-card-header">
+                        <h2>V. Additional Remarks</h2>
+                    </div>
+                    <div class="ios-card-content">
+                        <div class="ios-form-group">
+                            <label class="ios-label">Additional health conditions or concerns</label>
+                            <textarea class="ios-textarea" id="additional_remarks" placeholder="Please describe any additional health conditions, lifestyle factors, or concerns..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="ios-button" id="submit-btn">
+                    Submit Questionnaire
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RESULTS PAGE -->
+    <div id="results-page" class="page">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <button class="nav-button" onclick="showPage('questionnaire')">Back</button>
+            <div class="nav-title">Screening Results</div>
+            <button class="nav-button right" onclick="window.print()">Print</button>
+        </div>
+
+        <div class="container">
+            <div class="results-header">
+                <h1>Screening Completed</h1>
+                <p>Your results are ready</p>
+            </div>
+
+            <!-- Patient Info Card -->
+            <div class="ios-card">
+                <div class="ios-card-content">
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid #e5e5ea;">
+                        <span style="color: #8e8e93;">Age</span>
+                        <span style="font-weight: 600;">35 years</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid #e5e5ea;">
+                        <span style="color: #8e8e93;">Gender</span>
+                        <span style="font-weight: 600;">Female</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                        <span style="color: #8e8e93;">BMI</span>
+                        <span style="font-weight: 600;">32.5 (Obesity Class I)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warnings Card -->
+            <div class="ios-alert warning">
+                <strong>Important Warnings:</strong><br>
+                • This screening is for informational purposes only<br>
+                • Final medication selection must be made by your doctor<br>
+                • Do not start any medication without medical supervision
+            </div>
+
+            <!-- Recommended Medications -->
+            <div class="ios-card">
+                <div class="ios-card-header">
+                    <h2>Recommended Medications</h2>
+                    <p>Based on your screening results</p>
+                </div>
+                <div class="ios-card-content">
+                    <div class="medication-card" style="margin: 0; padding: 12px 0;">
+                        <div class="medication-name">1. Phentermine</div>
+                        <div class="medication-reasoning">Recommended for appetite control and weight management</div>
+                    </div>
+                    <div style="height: 1px; background: #e5e5ea; margin: 12px 0;"></div>
+                    <div class="medication-card" style="margin: 0; padding: 12px 0;">
+                        <div class="medication-name">2. Qsymia (Phentermine/Topiramate)</div>
+                        <div class="medication-reasoning">Suitable for patients with binge eating patterns</div>
+                    </div>
+                    <div style="height: 1px; background: #e5e5ea; margin: 12px 0;"></div>
+                    <div class="medication-card" style="margin: 0; padding: 12px 0;">
+                        <div class="medication-name">3. Contrave (Naltrexone/Bupropion)</div>
+                        <div class="medication-reasoning">Effective for emotional eating and mood-related weight gain</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Steps Card -->
+            <div class="ios-card">
+                <div class="ios-card-header">
+                    <h2>Next Steps</h2>
+                </div>
+                <div class="ios-card-content">
+                    <ol style="padding-left: 20px; line-height: 2;">
+                        <li style="margin-bottom: 12px;">A doctor will review your questionnaire and these recommendations</li>
+                        <li style="margin-bottom: 12px;">The doctor may contact you for additional questions or to schedule a consultation</li>
+                        <li style="margin-bottom: 12px;">Final medication selection will be made by your doctor based on your complete medical history</li>
+                        <li><strong>Do not</strong> start any medication without your doctor's approval</li>
+                    </ol>
+                </div>
+            </div>
+
+            <button class="ios-button secondary" onclick="showPage('questionnaire')">
+                Start New Screening
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Segment Control Handler
+        function selectSegment(button, field) {
+            const container = button.closest('.ios-form-group');
+            const segments = container.querySelectorAll('.ios-segment');
+            segments.forEach(s => s.classList.remove('active'));
+            button.classList.add('active');
+            
+            const value = button.dataset.value;
+            const hiddenInput = document.getElementById(field === 'gender' ? 'gender' : 'has_drug_allergies');
+            if (hiddenInput) {
+                hiddenInput.value = value === 'yes' ? 'true' : (value === 'no' ? 'false' : value);
+            }
+
+            // Show/hide allergies detail
+            if (field === 'drug_allergies') {
+                const detailDiv = document.getElementById('allergies-detail');
+                if (value === 'yes') {
+                    detailDiv.style.display = 'block';
+                } else {
+                    detailDiv.style.display = 'none';
+                }
+            }
+        }
+
+        // Checkbox Handler
+        function toggleCheckbox(item) {
+            const checkbox = item.querySelector('.ios-checkbox');
+            checkbox.checked = !checkbox.checked;
+        }
+
+        // Page Navigation
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            if (pageName === 'questionnaire') {
+                document.getElementById('questionnaire-page').classList.add('active');
+            } else if (pageName === 'results') {
+                document.getElementById('results-page').classList.add('active');
+            }
+        }
+
+        // Form Submission Handler
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="ios-spinner"></span> Submitting...';
+            
+            // Simulate API call
+            setTimeout(() => {
+                showPage('results');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Questionnaire';
+            }, 2000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for checkboxes
+            document.querySelectorAll('.ios-checkbox-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (e.target.type !== 'checkbox') {
+                        toggleCheckbox(this);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+

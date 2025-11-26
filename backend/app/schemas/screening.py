@@ -22,7 +22,9 @@ class ScreeningResultResponse(BaseModel):
     is_childbearing_age_woman: Optional[bool] = None
     bmi_category: Optional[str] = None
     initial_drug_pool: Optional[List[str]] = []
-    excluded_drugs: Optional[Dict[str, str]] = {}
+    excluded_drugs: Optional[Dict[str, str]] = {}  # Legacy field (now absolute_exclusions)
+    absolute_exclusions: Optional[Dict[str, str]] = {}  # NEW: Hard eliminated medications
+    relative_warnings: Optional[Dict[str, str]] = {}    # NEW: Caution/clearance required
     recommended_drugs: Optional[List[Dict[str, Any]]] = []
     screening_logic: Optional[List[Dict[str, str]]] = []
     warnings: Optional[List[str]] = []
